@@ -38,6 +38,8 @@ func main() {
 		entries[i] = struct{}{}
 	}
 
+	file.Close()
+
 	for key := range entries {
 		var found = false
 		toFind := 2020 - key
@@ -59,6 +61,4 @@ func main() {
 			break
 		}
 	}
-
-	file.Close()
 }

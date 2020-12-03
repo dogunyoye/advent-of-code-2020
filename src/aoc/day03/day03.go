@@ -88,5 +88,7 @@ func main() {
 		part2 *= res
 	}
 
-	fmt.Println("Part2:", part1*part2)
+	part2 *= part1
+
+	fmt.Println("Part2:", part2)
 }

@@ -10,56 +10,44 @@ import (
 	"strings"
 )
 
+func withinRange(value string, lowerLimit int, upperLimit int) bool {
+	num, err := strconv.Atoi(value)
+	if err != nil {
+		return false
+	}
+
+	if num < lowerLimit || num > upperLimit {
+		return false
+	}
+
+	return true
+}
+
 func isCredentialsValid(credentialsMap map[string]string) bool {
 	for k, v := range credentialsMap {
 
 		switch k {
 		case "byr":
-			birthYear, err := strconv.Atoi(v)
-			if err != nil {
-				return false
-			}
-
-			if birthYear < 1920 || birthYear > 2002 {
+			if !withinRange(v, 1920, 2002) {
 				return false
 			}
 		case "iyr":
-			issueYear, err := strconv.Atoi(v)
-			if err != nil {
-				return false
-			}
-
-			if issueYear < 2010 || issueYear > 2020 {
+			if !withinRange(v, 2010, 2020) {
 				return false
 			}
 		case "eyr":
-			expirationYear, err := strconv.Atoi(v)
-			if err != nil {
-				return false
-			}
-
-			if expirationYear < 2020 || expirationYear > 2030 {
+			if !withinRange(v, 2020, 2030) {
 				return false
 			}
 		case "hgt":
 			units := v[len(v)-2:]
 			switch units {
 			case "cm":
-				cm, err := strconv.Atoi(v[:len(v)-2])
-				if err != nil {
-					return false
-				}
-
-				if cm < 150 || cm > 193 {
+				if !withinRange(v[:len(v)-2], 150, 193) {
 					return false
 				}
 			case "in":
-				in, err := strconv.Atoi(v[:len(v)-2])
-				if err != nil {
-					return false
-				}
-
-				if in < 59 || in > 76 {
+				if !withinRange(v[:len(v)-2], 59, 76) {
 					return false
 				}
 			default:

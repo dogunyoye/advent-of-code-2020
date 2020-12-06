@@ -99,6 +99,8 @@ func main() {
 
 	var canBreak = false
 
+	scanner.Scan()
+
 	for {
 		line := scanner.Text()
 		if len(line) != 0 {

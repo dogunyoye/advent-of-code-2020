@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -55,12 +54,17 @@ func runBootCode(program []instruction) (int, bool) {
 	return accumulator, true
 }
 
-func runTerminatingBootCode(program []instruction, idxs []int, replaced operation) int {
+func runTerminatingBootCode(program []instruction, idxs []int) int {
 
 	for i := 0; i < len(idxs); i++ {
 		temp := program[idxs[i]].op
 
-		program[idxs[i]].op = replaced
+		if temp == jmp {
+			program[idxs[i]].op = nop
+		} else if temp == nop {
+			program[idxs[i]].op = jmp
+		}
+
 		accumulator, terminated := runBootCode(program)
 		if terminated {
 			return accumulator
@@ -97,26 +101,14 @@ func main() {
 
 	var part1, _ = runBootCode(program)
 
-	var jmpInstructions []int
+	var instructionsToReplace []int
 	for i, ins := range program {
-		if ins.op == jmp {
-			jmpInstructions = append(jmpInstructions, i)
+		if ins.op == jmp || ins.op == nop {
+			instructionsToReplace = append(instructionsToReplace, i)
 		}
 	}
 
-	var nopInstructions []int
-	for i, ins := range program {
-		if ins.op == nop {
-			nopInstructions = append(nopInstructions, i)
-		}
-	}
-
-	replaceJmpRes := runTerminatingBootCode(program, jmpInstructions, nop)
-	replaceNopRes := runTerminatingBootCode(program, nopInstructions, jmp)
-
-	// one of replaceJmpRes or replaceNopRes will return -1
-	// find the maximum of the 2
-	var part2 = math.Max(float64(replaceJmpRes), float64(replaceNopRes))
+	var part2 = runTerminatingBootCode(program, instructionsToReplace)
 
 	fmt.Println("Part1:", part1)
 	fmt.Println("Part2:", part2)

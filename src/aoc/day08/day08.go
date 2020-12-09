@@ -61,7 +61,7 @@ func runTerminatingBootCode(program []instruction, idxs []int) int {
 
 		if temp == jmp {
 			program[idxs[i]].op = nop
-		} else if temp == nop {
+		} else {
 			program[idxs[i]].op = jmp
 		}
 

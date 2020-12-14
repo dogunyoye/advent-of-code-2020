@@ -77,6 +77,7 @@ func main() {
 	// https://www.dcode.fr/chinese-remainder with the following values
 	// specific to my input:
 	// remainder	modulo
+	// ---------	------
 	//  0			29
 	// -19			41
 	// -29			601

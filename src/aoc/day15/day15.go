@@ -26,9 +26,7 @@ func playMemoryGame(initialNumbers []int, turnNumber int) int {
 		turnsSpoken, exists := memoryGameMap[prev]
 		if exists {
 			var spoken = 0
-			if len(*turnsSpoken) == 1 {
-				spoken = 0
-			} else {
+			if len(*turnsSpoken) > 1 {
 				// spoken before
 				timesSpoken := len(*turnsSpoken)
 				ref := *turnsSpoken

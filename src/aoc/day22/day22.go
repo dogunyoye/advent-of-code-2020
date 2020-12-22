@@ -14,8 +14,6 @@ type combatPlayer struct {
 
 type recursiveCombatPlayer struct {
 	playerName string
-	game       int
-	round      int
 	cards      []int
 	order      map[string]struct{}
 }
@@ -35,10 +33,19 @@ func cardOrder(cards []int) string {
 	return order
 }
 
+func applyWinner(winningCard int, winner recursiveCombatPlayer, losingCard int, loser recursiveCombatPlayer) ([]int, []int) {
+	winner.cards = winner.cards[1:]
+	winner.cards = append(winner.cards, winningCard)
+	winner.cards = append(winner.cards, losingCard)
+
+	loser.cards = loser.cards[1:]
+
+	return winner.cards, loser.cards
+}
+
 func playRecursiveCombat(player1 recursiveCombatPlayer, player2 recursiveCombatPlayer) (int, recursiveCombatPlayer) {
 
 	var result = 0
-	var round = 1
 
 	for {
 
@@ -53,7 +60,8 @@ func playRecursiveCombat(player1 recursiveCombatPlayer, player2 recursiveCombatP
 		_, exists2 := player2.order[p2Order]
 
 		if exists1 || exists2 {
-			// player 1 wins - don't care about result
+			// player 1 wins - don't care
+			// the about result
 			return 0, player1
 		}
 
@@ -65,43 +73,23 @@ func playRecursiveCombat(player1 recursiveCombatPlayer, player2 recursiveCombatP
 
 		if player1Card <= len(player1.cards)-1 && player2Card <= len(player2.cards)-1 {
 			// recurse into sub-game
-
-			var game = player1.game + 1
 			var _, winningPlayer = playRecursiveCombat(
-				recursiveCombatPlayer{"player1", game, round, copyArray(player1.cards[1 : player1Card+1]), make(map[string]struct{})},
-				recursiveCombatPlayer{"player2", game, round, copyArray(player2.cards[1 : player2Card+1]), make(map[string]struct{})})
+				recursiveCombatPlayer{"player1", copyArray(player1.cards[1 : player1Card+1]), make(map[string]struct{})},
+				recursiveCombatPlayer{"player2", copyArray(player2.cards[1 : player2Card+1]), make(map[string]struct{})})
 
 			if winningPlayer.playerName == "player1" {
-				player1.cards = player1.cards[1:]
-				player1.cards = append(player1.cards, player1Card)
-				player1.cards = append(player1.cards, player2Card)
-
-				player2.cards = player2.cards[1:]
+				player1.cards, player2.cards = applyWinner(player1Card, player1, player2Card, player2)
 			} else {
-				player2.cards = player2.cards[1:]
-				player2.cards = append(player2.cards, player2Card)
-				player2.cards = append(player2.cards, player1Card)
-
-				player1.cards = player1.cards[1:]
+				player2.cards, player1.cards = applyWinner(player2Card, player2, player1Card, player1)
 			}
 		} else {
 			// play game normally
 			if player1Card > player2Card {
-				player1.cards = player1.cards[1:]
-				player1.cards = append(player1.cards, player1Card)
-				player1.cards = append(player1.cards, player2Card)
-
-				player2.cards = player2.cards[1:]
+				player1.cards, player2.cards = applyWinner(player1Card, player1, player2Card, player2)
 			} else {
-				player2.cards = player2.cards[1:]
-				player2.cards = append(player2.cards, player2Card)
-				player2.cards = append(player2.cards, player1Card)
-
-				player1.cards = player1.cards[1:]
+				player2.cards, player1.cards = applyWinner(player2Card, player2, player1Card, player1)
 			}
 		}
-
-		round++
 	}
 
 	var winner recursiveCombatPlayer
@@ -210,8 +198,8 @@ func main() {
 
 	var part1 = playCombat(p1, p2)
 
-	var rp1 = recursiveCombatPlayer{"player1", 1, 1, player1RecursiveCombat, make(map[string]struct{})}
-	var rp2 = recursiveCombatPlayer{"player2", 1, 1, player2RecursiveCombat, make(map[string]struct{})}
+	var rp1 = recursiveCombatPlayer{"player1", player1RecursiveCombat, make(map[string]struct{})}
+	var rp2 = recursiveCombatPlayer{"player2", player2RecursiveCombat, make(map[string]struct{})}
 
 	var part2, _ = playRecursiveCombat(rp1, rp2)
 

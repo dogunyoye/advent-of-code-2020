@@ -49,7 +49,6 @@ func parseRules(rulesMap map[int]string, options map[int][]int) {
 			if containsDigit(v) {
 				// needs replacing
 				idxs, _ := options[k]
-				fmt.Println("Remaining!", k, idxs)
 
 				var optionsDefined = true
 				for _, idx := range idxs {
@@ -66,27 +65,19 @@ func parseRules(rulesMap map[int]string, options map[int][]int) {
 					val, _ := rulesMap[k]
 					var regex = ""
 
-					var hasPlus = false
 					split := strings.Split(val, " ")
 					for _, x := range split {
 						if x == "|" {
 							regex += x
 							continue
 						}
-						if x == "+" {
-							hasPlus = true
-							continue
-						}
+
 						num, _ := strconv.Atoi(x)
 						dep, _ := rulesMap[num]
 						regex += dep
 					}
 
 					regex = "(" + regex + ")"
-
-					if hasPlus {
-						regex += "+"
-					}
 					rulesMap[k] = regex
 				}
 			}
@@ -167,6 +158,23 @@ func main() {
 	// with
 	// 8: 42 | 42 8
 	// 11: 42 31 | 42 11 31
+	// super hacky...
+	rulesMap[8] = "42 | 42 42 | 42 42 42 | 42 42 42 42 | 42 42 42 42 42 | 42 42 42 42 42 42 | 42 42 42 42 42 42 42 | 42 42 42 42 42 42 42 42 | 42 42 42 42 42 42 42 42 42 | 42 42 42 42 42 42 42 42 42 42"
+	rulesMap[11] = "42 31 | 42 42 31 31 | 42 42 42 31 31 31 | 42 42 42 42 31 31 31 31 | 42 42 42 42 42 31 31 31 31 31 | 42 42 42 42 42 42 31 31 31 31 31 31 | 42 42 42 42 42 42 42 31 31 31 31 31 31 31"
+
+	parseRules(rulesMap, options)
+
+	var part2 = 0
+	var regex2 = strings.ReplaceAll("^"+rulesMap[8]+rulesMap[11]+"$", " ", "")
+	var r = regexp.MustCompile(regex2)
+
+	for _, m := range messages {
+		isValid := r.MatchString(m)
+		if isValid {
+			part2++
+		}
+	}
 
 	fmt.Println("Part1:", part1)
+	fmt.Println("Part2:", part2)
 }

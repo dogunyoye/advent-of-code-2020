@@ -7,19 +7,7 @@ import (
 	"os"
 )
 
-type position struct {
-	X int
-	Y int
-}
-
-type state string
 type direction string
-
-const (
-	floor    state = "."
-	empty          = "L"
-	occupied       = "#"
-)
 
 const (
 	northEast direction = "ne"

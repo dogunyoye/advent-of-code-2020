@@ -4,10 +4,34 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
 	"strconv"
 	"strings"
 )
+
+var one = big.NewInt(1)
+
+// taken from Rosetta code
+// https://rosettacode.org/wiki/Chinese_remainder_theorem#Go
+func crt(a, n []*big.Int) (*big.Int, error) {
+	p := new(big.Int).Set(n[0])
+	for _, n1 := range n[1:] {
+		p.Mul(p, n1)
+	}
+
+	var x, q, s, z big.Int
+	for i, n1 := range n {
+		q.Div(p, n1)
+		z.GCD(nil, &s, n1, &q)
+		if z.Cmp(one) != 0 {
+			return nil, fmt.Errorf("%d not coprime", n1)
+		}
+		x.Add(&x, s.Mul(a[i], s.Mul(&s, &q)))
+	}
+
+	return x.Mod(&x, p), nil
+}
 
 func main() {
 	file, err := os.Open("../../data/day13.txt")
@@ -59,23 +83,22 @@ func main() {
 
 	var part1 = timeElapsed * id
 
-	var remainders []int64
-	var mods []int64
+	var remainders []*big.Int
+	var mods []*big.Int
 
 	for i, id := range buses {
 		busID, err := strconv.Atoi(id)
 		if err == nil {
-			remainders = append(remainders, int64(-i))
-			mods = append(mods, int64(busID))
+			remainders = append(remainders, big.NewInt(int64(-i)))
+			mods = append(mods, big.NewInt(int64(busID)))
 		}
 	}
 
 	fmt.Println("Part1:", part1)
 
 	// Part 2 is related to CRT (Chinese Remainder Theorem)
-	// Haven't implemented this yet, but used an online calculator
-	// https://www.dcode.fr/chinese-remainder with the following values
-	// specific to my input:
+	// Can use an online calculator https://www.dcode.fr/chinese-remainder
+	// with the following values specific to my input:
 	// remainder	modulo
 	// ---------	------
 	//  0			29
@@ -87,5 +110,7 @@ func main() {
 	// -48			19
 	// -60			463
 	// -97			37
-	fmt.Println("Part2:", remainders, mods)
+
+	var part2, _ = crt(remainders, mods)
+	fmt.Println("Part2:", part2)
 }

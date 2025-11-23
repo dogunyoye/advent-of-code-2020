@@ -113,4 +113,19 @@ func main() {
 
 	var part2, _ = crt(remainders, mods)
 	fmt.Println("Part2:", part2)
+
+	var time = 0
+	var step = 1
+
+	for offset, busID := range buses {
+		if busID != "x" {
+			b, _ := strconv.Atoi(busID)
+			for (time+offset)%b != 0 {
+				time += step
+			}
+			step *= b
+		}
+	}
+
+	fmt.Println("Part2 (Alternative):", time)
 }

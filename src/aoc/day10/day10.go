@@ -37,10 +37,11 @@ func findJoltageDifferences(currentRating int, ratings []int, differences *[]int
 }
 
 func tribonacciGen(n int) int64 {
-	//function to generate n tetranacci numbers
-	if n == 0 || n == 1 {
+	// function to generate n tetranacci numbers
+	switch n {
+	case 0, 1:
 		return 1
-	} else if n == 2 {
+	case 2:
 		return 2
 	}
 
@@ -105,6 +106,28 @@ func findAllAdapterArrangements(ratings []int) int64 {
 	return result
 }
 
+func findAllValidAdapterArrangements(ratings []int, idx int, memo map[int]int64) int64 {
+	if idx == len(ratings)-1 {
+		return 1
+	}
+
+	if value, exists := memo[ratings[idx]]; exists {
+		return value
+	}
+
+	var result = int64(0)
+	for next := idx + 1; next < len(ratings); next++ {
+		if ratings[next]-ratings[idx] <= 3 {
+			result += findAllValidAdapterArrangements(ratings, next, memo)
+		} else {
+			break
+		}
+	}
+
+	memo[ratings[idx]] = result
+	return result
+}
+
 func main() {
 	file, err := os.Open("../../data/day10.txt")
 
@@ -142,11 +165,16 @@ func main() {
 	}
 
 	var part1 = ones * threes
+
 	ratings = append(ratings, 0)
+	sort.Ints(ratings)
 	ratings = append(ratings, ratings[len(ratings)-1]+3)
 
-	sort.Ints(ratings)
-	var part2 = findAllAdapterArrangements(ratings)
+	memo := make(map[int]int64)
+	var part2 = findAllValidAdapterArrangements(ratings, 0, memo)
+
+	// Old solution
+	// var part2 = findAllAdapterArrangements(ratings)
 
 	fmt.Println("Part1:", part1)
 	fmt.Println("Part2:", part2)

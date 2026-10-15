@@ -10,6 +10,11 @@ import (
 	"strings"
 )
 
+var (
+	hairColourPattern = regexp.MustCompile("#[0-9a-f]{6}")
+	eyeColourPattern  = regexp.MustCompile("amb|blu|brn|gry|grn|hzl|oth")
+)
+
 func withinRange(value string, lowerLimit int, upperLimit int) bool {
 	num, err := strconv.Atoi(value)
 	if err != nil {
@@ -54,15 +59,11 @@ func isCredentialsValid(credentialsMap map[string]string) bool {
 				return false
 			}
 		case "hcl":
-			isValid, _ := regexp.MatchString("#[0-9a-f]{6}", v)
-
-			if !isValid {
+			if !hairColourPattern.MatchString(v) {
 				return false
 			}
 		case "ecl":
-			isValid, _ := regexp.MatchString("amb|blu|brn|gry|grn|hzl|oth", v)
-
-			if !isValid {
+			if !eyeColourPattern.MatchString(v) {
 				return false
 			}
 		case "pid":
@@ -135,6 +136,10 @@ func main() {
 		}
 
 		scanner.Scan()
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
 	}
 
 	file.Close()

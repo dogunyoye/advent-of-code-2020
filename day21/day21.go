@@ -89,6 +89,10 @@ func main() {
 		}
 	}
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 
 	var part1 = findIngredientsWithNoAllergens(ingredientsMap, allergensMap, possibleAllergens)

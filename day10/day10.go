@@ -36,76 +36,6 @@ func findJoltageDifferences(currentRating int, ratings []int, differences *[]int
 	return findJoltageDifferences(window[0], window, differences)
 }
 
-func tribonacciGen(n int) int64 {
-	// function to generate n tetranacci numbers
-	switch n {
-	case 0, 1:
-		return 1
-	case 2:
-		return 2
-	}
-
-	var first = int64(1)
-	var second = int64(1)
-	var third = int64(2)
-
-	for i := 0; i < n-2; i++ {
-		var next = first + second + third
-		first = second
-		second = third
-		third = next
-	}
-
-	return third
-}
-
-func findAllAdapterArrangements(ratings []int) int64 {
-	var steps = make(map[int]int)
-
-	for i := 0; i < len(ratings)-1; i++ {
-		curr := ratings[i]
-		next := ratings[i+1]
-
-		steps[curr] = next - curr
-	}
-
-	// To store the keys in slice in sorted order
-	keys := make([]int, len(steps))
-	i := 0
-	for k := range steps {
-		keys[i] = k
-		i++
-	}
-	sort.Ints(keys)
-
-	var onesChain = 0
-	var chainArr []int
-
-	for _, i := range keys {
-		if steps[i] == 1 {
-			onesChain++
-		} else {
-			if onesChain >= 2 {
-				chainArr = append(chainArr, onesChain)
-			}
-
-			onesChain = 0
-		}
-	}
-
-	// append the remaining chain
-	if onesChain > 1 {
-		chainArr = append(chainArr, onesChain)
-	}
-
-	var result = int64(1)
-	for _, t := range chainArr {
-		result *= tribonacciGen(t)
-	}
-
-	return result
-}
-
 func findAllValidAdapterArrangements(ratings []int, idx int, memo map[int]int64) int64 {
 	if idx == len(ratings)-1 {
 		return 1
@@ -147,6 +77,10 @@ func main() {
 	for scanner.Scan() {
 		value, _ := strconv.Atoi(scanner.Text())
 		ratings = append(ratings, value)
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
 	}
 
 	file.Close()

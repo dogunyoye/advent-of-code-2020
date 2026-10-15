@@ -100,6 +100,10 @@ func main() {
 		program = append(program, instruction{op, value})
 	}
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 
 	var part1, _ = runBootCode(program)

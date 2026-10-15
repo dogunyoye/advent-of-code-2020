@@ -241,5 +241,9 @@ func main() {
 	fmt.Println("Part1:", part1)
 	fmt.Println("Part2:", part2)
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 }

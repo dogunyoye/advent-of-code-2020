@@ -80,6 +80,10 @@ func main() {
 		numbers = append(numbers, value)
 	}
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 
 	preamble := 25

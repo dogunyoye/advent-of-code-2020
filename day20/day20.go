@@ -36,13 +36,6 @@ func copyTile(tile []string) []string {
 	return copy
 }
 
-func printTile(tile []string) {
-	for _, line := range tile {
-		fmt.Println(line)
-	}
-	fmt.Println()
-}
-
 // rotate the tile 90 degrees clockwise
 func rotateTile(tile []string) []string {
 	var rotated []string
@@ -395,6 +388,10 @@ func main() {
 			fmt.Println("Part2:", countWater(bigImage)-(15*seaMonsters))
 			break
 		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
 	}
 
 	file.Close()

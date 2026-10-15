@@ -20,15 +20,6 @@ func containsDigit(s string) bool {
 	return false
 }
 
-func remove(s []int, r int) []int {
-	for i, v := range s {
-		if v == r {
-			return append(s[:i], s[i+1:]...)
-		}
-	}
-	return s
-}
-
 func parseRules(rulesMap map[int]string, options map[int][]int) {
 	for {
 		var count = 0
@@ -142,6 +133,10 @@ func main() {
 			message := scanner.Text()
 			messages = append(messages, message)
 		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
 	}
 
 	file.Close()

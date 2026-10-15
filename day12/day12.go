@@ -171,6 +171,10 @@ func main() {
 		navigation = append(navigation, instruction{op, value})
 	}
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 
 	var ferry = ship{0, 0, east, map[action]int{

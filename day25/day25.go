@@ -57,5 +57,9 @@ func main() {
 
 	fmt.Println("Part1:", part1)
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 }

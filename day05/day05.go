@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"sort"
 	"strings"
@@ -27,7 +26,7 @@ func calculateRowColumn(reader *bufio.Reader, isUpper bool, data []int) int {
 		return data[0]
 	}
 
-	middle := math.Floor(float64(len(data) / 2))
+	middle := len(data) / 2
 
 	switch ch {
 	case 'L':
@@ -35,13 +34,13 @@ func calculateRowColumn(reader *bufio.Reader, isUpper bool, data []int) int {
 		fallthrough
 	case 'F':
 		// lower
-		return calculateRowColumn(reader, isUpper, data[:int(middle)])
+		return calculateRowColumn(reader, isUpper, data[:middle])
 	case 'B':
 		// higher
 		fallthrough
 	case 'R':
 		// higher
-		return calculateRowColumn(reader, isUpper, data[int(middle):])
+		return calculateRowColumn(reader, isUpper, data[middle:])
 	default:
 		// should not get here
 		fmt.Println("Error, invalid ch:", ch)
@@ -100,6 +99,10 @@ func main() {
 			part1 = seatID
 		}
 
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
 	}
 
 	file.Close()

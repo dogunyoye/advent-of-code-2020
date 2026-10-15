@@ -41,6 +41,10 @@ func main() {
 		entries[i] = struct{}{}
 	}
 
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading input: %s", err)
+	}
+
 	file.Close()
 
 	for key := range entries {

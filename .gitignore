@@ -1,1 +1,10 @@
-src/data/*.txt
+# Puzzle inputs are personal - don't commit them.
+data/*.txt
+
+# Go build artifacts
+*.exe
+*.out
+/bin/
+
+# Editor / OS noise
+.DS_Store

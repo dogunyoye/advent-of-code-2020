@@ -7,4 +7,5 @@ data/*.txt
 /bin/
 
 # Editor / OS noise
+.vscode/
 .DS_Store

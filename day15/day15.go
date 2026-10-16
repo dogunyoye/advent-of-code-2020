@@ -9,43 +9,33 @@ import (
 	"strings"
 )
 
-func playMemoryGame(initialNumbers []int, turnNumber int) int {
-	var turnsLeft = turnNumber - len(initialNumbers)
-	var memoryGameMap = make(map[int]*[]int)
-
-	var currentTurn = len(initialNumbers)
-
-	// initialise the game
-	for i, n := range initialNumbers {
-		memoryGameMap[n] = &[]int{i + 1}
+// Plays the memory game, returning the numbers spoken on part1Turn and
+// part2Turn. Only the most recent turn of each number is tracked, which is
+// all the game rules need.
+func playMemoryGame(initialNumbers []int, part1Turn, part2Turn int) (int, int) {
+	lastSpoken := make(map[int]int, len(initialNumbers)*2)
+	for i, n := range initialNumbers[:len(initialNumbers)-1] {
+		lastSpoken[n] = i + 1 // turns are 1-based
 	}
 
-	for turnsLeft != 0 {
-		currentTurn++
-		prev := initialNumbers[len(initialNumbers)-1]
-		turnsSpoken, exists := memoryGameMap[prev]
-		if exists {
-			var spoken = 0
-			if len(*turnsSpoken) > 1 {
-				// spoken before
-				timesSpoken := len(*turnsSpoken)
-				ref := *turnsSpoken
-				spoken = ref[timesSpoken-1] - ref[timesSpoken-2]
-			}
+	part1 := 0
 
-			initialNumbers = append(initialNumbers, spoken)
-			l, e := memoryGameMap[spoken]
-			if !e {
-				memoryGameMap[spoken] = &[]int{currentTurn}
-			} else {
-				*l = append(*l, currentTurn)
-			}
+	last := initialNumbers[len(initialNumbers)-1]
+	for turn := len(initialNumbers) + 1; turn <= part2Turn; turn++ {
+		if prev, seen := lastSpoken[last]; seen {
+			lastSpoken[last] = turn - 1
+			last = turn - 1 - prev
+		} else {
+			lastSpoken[last] = turn - 1
+			last = 0
 		}
 
-		turnsLeft--
+		if turn == part1Turn {
+			part1 = last
+		}
 	}
 
-	return initialNumbers[turnNumber-1]
+	return part1, last
 }
 
 func main() {
@@ -75,8 +65,7 @@ func main() {
 
 	file.Close()
 
-	var part1 = playMemoryGame(initialNumbers, 2020)
-	var part2 = playMemoryGame(initialNumbers, 30000000)
+	part1, part2 := playMemoryGame(initialNumbers, 2020, 30000000)
 
 	fmt.Println("Part1:", part1)
 	fmt.Println("Part2:", part2)
